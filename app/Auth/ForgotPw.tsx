@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import AuthInput from "../../components/AuthInput";
-import OTPInput from "../../components/OTPinput";
+import OTPInput from "../../components/OTPInput";
 
 export default function ForgotPasswordScreen() {
     const [step, setStep] = useState<"email" | "otp">("email");
