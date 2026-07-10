@@ -1,33 +1,62 @@
 import CustomHeader from "@/components/CustomHeader";
+import ProductFilters, { SortOption } from "@/components/ProductFilters";
 import ProductGrid from "@/components/ProductGrid";
 import { router } from "expo-router";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 
 export default function HomeScreen() {
-    const [filters, setFilters] = useState({
-        search: "",
-        minPrice: undefined,
-        maxPrice: undefined,
-        itemTypes: [],
-    });
+    const [search, setSearch] = useState("");
+    const [sort, setSort] = useState<SortOption>("lowToHigh");
+    const [selectedTypes, setSelectedTypes] = useState<string[]>([]);
+
+    const filteredProducts = useMemo(() => {
+        let data = [...PRODUCTS];
+
+        // Search
+        if (search.trim()) {
+            data = data.filter((item) =>
+                item.name.toLowerCase().includes(search.toLowerCase())
+            );
+        }
+
+        // Item Type
+        if (selectedTypes.length > 0) {
+            data = data.filter((item) => selectedTypes.includes(item.type));
+        }
+
+        // Price Sort
+        data.sort((a, b) =>
+            sort === "lowToHigh" ? a.price - b.price : b.price - a.price
+        );
+
+        return data;
+    }, [search, selectedTypes, sort]);
+
     return (
         <>
             <CustomHeader
-
                 userName="Aishwarya"
                 avatar="https://i.pravatar.cc/150?img=32"
                 onProfilePress={() => router.push("/Profile")}
                 onLogoutPress={() => router.push("/Auth/Login")}
             />
-            <ProductGrid
-                products={PRODUCTS}
-                filters={filters}
+
+            <ProductFilters
+                search={search}
+                sort={sort}
+                selectedTypes={selectedTypes}
+                productTypes={PRODUCT_TYPES}
+                onSearchChange={setSearch}
+                onSortChange={setSort}
+                onTypesChange={setSelectedTypes}
             />
 
+            <ProductGrid
+                products={filteredProducts}
+            />
         </>
     );
 }
-
 
 const PRODUCTS = [
     {
@@ -80,3 +109,12 @@ const PRODUCTS = [
     },
 ];
 
+const PRODUCT_TYPES = [
+    "T-Shirt",
+    "Hoodie",
+    "Jacket",
+    "Shirt",
+    "Sweatshirt",
+    "Pants",
+    "Shoes",
+];
