@@ -1,9 +1,11 @@
 // components/ProductCard.tsx
 
+import { router } from "expo-router";
 import { Heart, Star } from "lucide-react-native";
 import { Image, Pressable, Text, View } from "react-native";
 
 type ProductCardProps = {
+  id: string;
   image: string;
   name: string;
   type: string;
@@ -14,6 +16,7 @@ type ProductCardProps = {
 };
 
 export default function ProductCard({
+  id,
   image,
   name,
   type,
@@ -23,7 +26,22 @@ export default function ProductCard({
   onFavoritePress,
 }: ProductCardProps) {
   return (
-    <View className="w-full overflow-hidden rounded-[28px] bg-white">
+    <Pressable
+      onPress={() =>
+        router.push({
+          pathname: "/ProductDetails",
+          params: {
+            id,
+            image,
+            name,
+            type,
+            price: price.toString(),
+            rating: rating.toString(),
+          },
+        })
+      }
+      className="w-full overflow-hidden rounded-[28px] bg-white"
+    >
       {/* Product Image */}
       <View className="relative aspect-[3/4] w-full">
         <Image
@@ -33,7 +51,10 @@ export default function ProductCard({
         />
 
         <Pressable
-          onPress={onFavoritePress}
+          onPress={(e) => {
+            e.stopPropagation();
+            onFavoritePress?.();
+          }}
           className="absolute right-4 top-4 h-12 w-12 items-center justify-center rounded-full bg-black/90"
         >
           <Heart
@@ -80,6 +101,6 @@ export default function ProductCard({
           </View>
         </View>
       </View>
-    </View>
+    </Pressable>
   );
 }

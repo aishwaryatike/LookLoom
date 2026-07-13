@@ -104,6 +104,7 @@ export default function ProductGrid({
                         }}
                     >
                         <ProductCard
+                            id={item.id}
                             image={item.image}
                             name={item.name}
                             type={item.type}
